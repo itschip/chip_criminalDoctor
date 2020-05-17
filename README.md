@@ -1,6 +1,7 @@
 # chip_criminalDoctor
 A ESX based script.
 
+<img height="500" src="https://github.com/RotteRagna/chip_criminalDoctor/blob/master/preview.jpg" />
 
 #  Description
 This is a criminal doctor script made with the ESX develop branch. 
