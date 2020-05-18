@@ -10,8 +10,11 @@ local Keys = {
     ["NENTER"] = 201, ["N4"] = 108, ["N5"] = 60, ["N6"] = 107, ["N+"] = 96, ["N-"] = 97, ["N7"] = 117, ["N8"] = 61, ["N9"] = 118
   }
 
+
+local Beds, CurrentBed, OnBed = {"v_med_cor_emblmtable"}, nil, false
+
 local createdCamera = 0
-ESX                             = nil
+ESX = nil
   
 Citizen.CreateThread(function()
   while ESX == nil do
@@ -78,14 +81,94 @@ Citizen.CreateThread(function()
               if IsControlJustReleased(0, 38) and GetDistanceBetweenCoords(coords, v.x, v.y, v.z, true) < 3.0 and isHurt then 
                   local ped = PlayerPedId()
                   TriggerServerEvent("chip_cDoc:takeMoney")
-                  -- Keep "IsControlJustReleased(0, 38)", else it will spam notification. Unless you have a fix.
-              elseif IsControlJustReleased(0, 38) and not isHurt then
+              elseif IsControlJustReleased(0, 38) and not isHurt and CurrentBed ~= nil then
+                print("weg")
                 exports['mythic_notify']:DoHudText('error', 'You are not hurt!', { ['background-color'] = 'red', ['color'] = '#fff' })
               end
           end
       end
   end
 end)
+
+-- BED
+
+Citizen.CreateThread(function()
+	while true do
+		Citizen.Wait(1000)
+
+		if not OnBed then
+			local PlayerPed = PlayerPedId()
+			local PlayerCoords = GetEntityCoords(PlayerPed)
+
+			for k,v in pairs(Beds) do
+				local ClosestBed = GetClosestObjectOfType(PlayerCoords, 1.5, GetHashKey(v), false, false)
+
+				if ClosestBed ~= 0 and ClosestBed ~= nil then
+					CurrentBed = ClosestBed
+					break
+				else
+					CurrentBed = nil
+				end
+			end
+		end
+	end
+end)
+
+
+function LoadAnimSet(AnimDict)
+	if not HasAnimDictLoaded(AnimDict) then
+		RequestAnimDict(AnimDict)
+
+		while not HasAnimDictLoaded(AnimDict) do
+			Citizen.Wait(1)
+		end
+	end
+end
+
+function getOnBed() 
+  local PlayerPed = PlayerPedId()
+			local BedCoords, BedHeading = GetEntityCoords(CurrentBed), GetEntityHeading(CurrentBed)
+
+			LoadAnimSet('missfbi1')
+			SetEntityCoords(PlayerPed, BedCoords)
+			SetEntityHeading(PlayerPed, (BedHeading+180))
+
+			TaskPlayAnim(PlayerPed, 'missfbi1', 'cpr_pumpchest_idle', 8.0, -8.0, -1, 1, 0, false, false, false)
+			OnBed = true
+end
+
+
+-- THE ACTUAL "GETTING HELP THING" THING
+
+RegisterNetEvent("chip_cDoc:getHelp")
+AddEventHandler("chip_cDoc:getHelp", function()
+  getOnBed()
+  local ped = PlayerPedId()
+  createCameraScene()
+  TriggerEvent("mythic_progressbar:client:progress", {
+    name = "unique_action_name",
+    duration = 20000,
+    label = "You are being treated...",
+    useWhileDead = false,
+    canCancel = true,
+    controlDisables = {
+        disableMovement = true,
+        disableCarMovement = true,
+        disableMouse = false,
+        disableCombat = true,
+    }
+}, function(status)
+    if not status then
+      local ped = PlayerPedId()
+      SetEntityHealth(ped, 200)
+    end
+end)
+  Citizen.Wait(20000)
+  closeCameraScene()
+  ClearPedTasks(ped)
+end)
+
+
 
 function createCameraScene()
   local cam = CreateCam("DEFAULT_SCRIPTED_CAMERA", 1)
@@ -102,43 +185,3 @@ function closeCameraScene()
 	ClearTimecycleModifier("scanline_cam_cheap")
   SetFocusEntity(GetPlayerPed(PlayerId()))
 end
-
-
--- THE ACTUAL "GETTING HELP THING" THING
-
-RegisterNetEvent("chip_cDoc:getHelp")
-AddEventHandler("chip_cDoc:getHelp", function()
-  local ped = PlayerPedId()
-  SetEntityHeading(ped, 304.43)
-  for k,v in ipairs(Config.DoctorBed) do
-    SetEntityCoords(ped, v.x, v.y, v.z, 0, 0, 0, 0)
-  end
-  createCameraScene()
-  TriggerEvent("mythic_progressbar:client:progress", {
-    name = "unique_action_name",
-    duration = 20000,
-    label = "You are being treated...",
-    useWhileDead = false,
-    canCancel = true,
-    controlDisables = {
-        disableMovement = true,
-        disableCarMovement = true,
-        disableMouse = false,
-        disableCombat = true,
-    },
-    animation = {
-        animDict = "amb@world_human_picnic@male@idle_a",
-        anim = "idle_a"
-    }
-}, function(status)
-    if not status then
-      local ped = PlayerPedId()
-      SetEntityHealth(ped, 200)
-      print("Hello")  
-    end
-end)
-  Citizen.Wait(20000)
-  closeCameraScene()
-  ClearPedTasks(ped)
-end)
-
