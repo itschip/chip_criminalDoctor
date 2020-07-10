@@ -8,8 +8,8 @@ Doctor spawn at desk where you check in.
 A new doctor spawns when you are treated. (See screenshot)
 
 # Requirements
-<a herf="https://github.com/JayMontana36/mythic_notify">mythic_notify</a>
-<a herf="https://github.com/XxFri3ndlyxX/mythic_progressbar">mythic_progressbar</a>
+https://github.com/JayMontana36/mythic_notify
+
 
 #  Description
 This is a criminal doctor script made with the ESX develop branch. 
