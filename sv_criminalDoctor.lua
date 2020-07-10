@@ -9,11 +9,9 @@ AddEventHandler("chip_cDoc:takeMoney", function()
     local _source = source
     local xPlayer  = ESX.GetPlayerFromId(_source)
     if xPlayer.getMoney() > Config.toPay then
-        print("Hello1")
         TriggerClientEvent("chip_cDoc:getHelp", source)
-        xPlayer.removeMoney(2000)
+        xPlayer.removeMoney(Config.toPay)
     else
-        print("I aint got no dollas")
         TriggerClientEvent('mythic_notify:client:SendAlert', source, 
         { 
             type = 'error', 

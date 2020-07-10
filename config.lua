@@ -17,3 +17,11 @@ Config.CriminalDoctor= {
         }
     }
 }
+
+Config.Doctor = {
+    {x = -1405.59, y = -437.46, z = 36.56}
+}
+
+Config.Doc = {
+    {x = -1403.15, y = -440.94, z = 36.56}
+}
