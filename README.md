@@ -9,7 +9,8 @@ A new doctor spawns when you are treated. (See screenshot)
 
 # Requirements
 https://github.com/JayMontana36/mythic_notify
-
+<br>
+https://github.com/XxFri3ndlyxX/mythic_progressbar
 
 #  Description
 This is a criminal doctor script made with the ESX develop branch. 
