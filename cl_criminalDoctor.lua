@@ -81,7 +81,7 @@ Citizen.CreateThread(function()
       for k,v in ipairs(Config.Doctor) do
           if (GetDistanceBetweenCoords(coords, v.x, v.y, v.z, true) < 2.0) then     
               Draw3DText(v.x, v.y, v.z, "~b~[E]~s~ to get help [~g~$" .. Config.toPay .. "~s~]" )
-              if IsControlJustReleased(0, 38) and GetDistanceBetweenCoords(coords, v.x, v.y, v.z, true) < 3.0 then 
+              if IsControlJustReleased(0, 38) and GetDistanceBetweenCoords(coords, v.x, v.y, v.z, true) < 3.0 and isHurt then 
                   local ped = PlayerPedId()
                   TriggerServerEvent("chip_cDoc:takeMoney")
               elseif IsControlJustReleased(0, 38) and not isHurt and CurrentBed ~= nil then
@@ -154,9 +154,13 @@ AddEventHandler("chip_cDoc:getHelp", function()
     }
 }, function(status)
     if not status then
+      DoScreenFadeOut(100)
       local ped = PlayerPedId()
-      SetEntityHealth(ped, 200)
       isTreated = true
+      local bedLocation, bedHeading = GetEntityCoords(CurrentBed), GetEntityHeading(CurrentBed)
+      NetworkResurrectLocalPlayer(bedLocation, bedHeading, true, false)
+      Citizen.Wait(2000)
+      DoScreenFadeIn(100)
     end
 end)
   Citizen.Wait(20000)
@@ -183,7 +187,7 @@ function getOnBed()
 			local BedCoords, BedHeading = GetEntityCoords(CurrentBed), GetEntityHeading(CurrentBed)
 
 			LoadAnimSet('missfbi1')
-			SetEntityCoords(PlayerPed, BedCoords)
+			SetEntityCoords(PlayerPed, BedCoords, true, true, true, false)
 			SetEntityHeading(PlayerPed, (BedHeading+180))
 
 			TaskPlayAnim(PlayerPed, 'missfbi1', 'cpr_pumpchest_idle', 8.0, -8.0, -1, 1, 0, false, false, false)
