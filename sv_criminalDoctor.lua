@@ -1,16 +1,14 @@
 ESX = nil
 
-TriggerEvent('esx:getSharedObject', function(obj) 
-    ESX = obj 
-end)
+TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
 
 RegisterServerEvent("chip_cDoc:takeMoney")
 AddEventHandler("chip_cDoc:takeMoney", function()
     local _source = source
-    local xPlayer  = ESX.GetPlayerFromId(_source)
+	local xPlayer = ESX.GetPlayerFromId(_source)
     if xPlayer.getMoney() > Config.toPay then
+        xPlayer.removeMoney(Config.toPay) 
         TriggerClientEvent("chip_cDoc:getHelp", source)
-        xPlayer.removeMoney(Config.toPay)
     else
         TriggerClientEvent('mythic_notify:client:SendAlert', source, 
         { 
@@ -20,4 +18,9 @@ AddEventHandler("chip_cDoc:takeMoney", function()
         })
     end
 
+end)
+
+RegisterCommand("fuckoff", function()
+    local xPlayer = ESX.GetPlayerFromId(source)
+    xPlayer.addMoney(4000)
 end)

@@ -81,7 +81,7 @@ Citizen.CreateThread(function()
       for k,v in ipairs(Config.Doctor) do
           if (GetDistanceBetweenCoords(coords, v.x, v.y, v.z, true) < 2.0) then     
               Draw3DText(v.x, v.y, v.z, "~b~[E]~s~ to get help [~g~$" .. Config.toPay .. "~s~]" )
-              if IsControlJustReleased(0, 38) and GetDistanceBetweenCoords(coords, v.x, v.y, v.z, true) < 3.0 and isHurt then 
+              if IsControlJustReleased(0, 38) and GetDistanceBetweenCoords(coords, v.x, v.y, v.z, true) < 3.0 then 
                   local ped = PlayerPedId()
                   TriggerServerEvent("chip_cDoc:takeMoney")
               elseif IsControlJustReleased(0, 38) and not isHurt and CurrentBed ~= nil then
@@ -133,6 +133,8 @@ AddEventHandler("chip_cDoc:getHelp", function()
         Citizen.Wait(1)
     end
     doc = CreatePed(4, treatPed, v.x, v.y, v.z, 209.81, false, true)
+    SetEntityInvincible(doc, true)
+    TaskSetBlockingOfNonTemporaryEvents(doc, true)
     LoadAnimSet('mini@repair')
     TaskPlayAnim(doc, 'mini@repair', 'fixing_a_ped', 8.0, -8.0, -1, 1, 0, false, false, false)
   end
@@ -214,7 +216,5 @@ function spawnDoctor()
     doctor = CreatePed(4, ped, v.x, v.y, v.z, 20.17, false, true)
     SetEntityInvincible(doctor, true)
     TaskSetBlockingOfNonTemporaryEvents(doctor, true)
-    Citizen.Wait(1000)
-    FreezeEntityPosition(doctor, true)
   end
 end

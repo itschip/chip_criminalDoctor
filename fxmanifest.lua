@@ -4,7 +4,7 @@ game 'gta5'
 
 description 'Criminal doctor by chip#9999'
 
-version '0.0.1'
+version '1.0.1'
 
 server_scripts {
     "sv_criminalDoctor.lua",
